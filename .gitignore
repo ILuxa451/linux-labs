@@ -1,0 +1,24 @@
+# SSH keys — НИКОГДА не коммитить
+*.pem
+id_rsa*
+id_ed25519*
+*.key
+*_key
+
+# Env и секреты
+.env
+.env.*
+*.secret
+*password*
+*passwd*
+
+# Локальный мусор
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Логи и временные
+*.log
+tmp/
+.cache/
