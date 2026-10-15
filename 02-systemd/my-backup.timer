@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily backup timer for my-backup.service
+Requires=my-backup.service
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+Unit=my-backup.service
+
+[Install]
+WantedBy=timers.target

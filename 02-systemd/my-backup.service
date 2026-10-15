@@ -1,0 +1,17 @@
+[Unit]
+Description=My Custom Backup Service
+After=network-online.target
+Wants=network-online.target
+Requires=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/my-backup.sh
+User=backup-user
+Group=backup-user
+NoNewPrivileges=true
+PrivateTmp=true
+ReadWritePaths=/backup /var/log/my-backup.log
+
+[Install]
+WantedBy=multi-user.target
