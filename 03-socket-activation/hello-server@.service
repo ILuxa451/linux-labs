@@ -1,0 +1,23 @@
+[Unit]
+Description=Hello Server Service
+After=network.target
+
+[Service]
+Type=simple
+User=hello-user
+Group=hello-user
+ExecStart=/usr/bin/awk '/^\r$/ {exit} END {printf "HTTP/1.1 200 OK\\r\\nContent-Type: text/plain\\r\\nContent-Length: 20\\r\\nConnection: close\\r\\n\\r\\nHello from systemd!\\n"}'
+Restart=always
+RestartSec=3
+
+StandardInput=socket
+StandardOutput=socket
+
+# Ограничения безопасности
+ProtectSystem=strict
+PrivateTmp=yes
+# ProtectHome=yes
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=multi-user.target
