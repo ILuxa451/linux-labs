@@ -1,4 +1,4 @@
-# Lab 03 — Развертывание FreeIPA (Astra Linux Directory Alternative)
+# Lab 04 — Развертывание FreeIPA (Astra Linux Directory Alternative)
 
 Практическая работа по развертыванию доменной инфраструктуры на базе Linux (аналог Active Directory). В качестве альтернативы проприетарному решению Astra Linux Directory (ALD) был выбран OpenSource-стек FreeIPA.
 
