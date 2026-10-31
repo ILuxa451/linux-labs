@@ -1,38 +1,37 @@
-Lab 04 — Развертывание FreeIPA (Astra Linux Directory Alternative)
+# Lab 04 — Развертывание FreeIPA (Astra Linux Directory Alternative)
 
 Практическая работа по развертыванию доменной инфраструктуры на базе Linux (аналог Active Directory). В качестве альтернативы проприетарному решению Astra Linux Directory (ALD) был выбран OpenSource-стек FreeIPA.
- Стек технологий
 
-    ОС хоста: Ubuntu Server 22.04
+##  Стек технологий
 
-    Среда: Docker (контейнер freeipa/freeipa-server:almalinux-9)
+* **ОС хоста:** Ubuntu Server 22.04
+* **Среда:** Docker (контейнер `freeipa/freeipa-server:almalinux-9`)
+* **Компоненты:** 389 Directory Server (LDAP), Kerberos KDC, BIND (DNS), Dogtag CA, Apache (Web UI).
 
-    Компоненты: 389 Directory Server (LDAP), Kerberos KDC, BIND (DNS), Dogtag CA, Apache (Web UI).
+##  Файлы проекта
 
- Файлы проекта
+* [docker-compose.yml](./docker-compose.yml) — конфигурация для запуска контейнера.
+* [troubleshooting.md](./troubleshooting.md) — разбор возникших ошибок и способы их решения.
 
-    docker-compose.yml — конфигурация для запуска контейнера.
+##  Как запустить (Инструкция для развертывания)
 
-    troubleshooting.md — разбор возникших ошибок и способы их решения.
+*Эти команды выполняются на сервере, где вы хотите поднять FreeIPA (например, на Ubuntu Server).*
 
- Как запустить (Инструкция для развертывания)
-
-Эти команды выполняются на сервере, где вы хотите поднять FreeIPA (например, на Ubuntu Server).
-
-    Перейдите в папку с лабой:
-
-    cd 04-freeipa-domain
+1. Перейдите в папку с лабой:
+   ```bash
+   cd 04-freeipa-domain
 
     Отключите системный DNS (чтобы освободить порт 53 для FreeIPA):
+    bash
 
     sudo systemctl stop systemd-resolved
     sudo systemctl disable systemd-resolved
 
     Запустите контейнер (рекомендуется Docker Compose V2):
+    bash
 
     docker compose up -d
 
     Веб-интерфейс будет доступен по адресу: https://ipa.astra.lab/ipa/ui
 
-Важно: В текущей конфигурации Docker-образа установщик может упасть на этапе ipa-client-install из-за бага изоляции сети Docker. Однако сам сервер (LDAP, Kerberos, DNS) поднимается успешно. Подробнее в troubleshooting.
-
+    Важно: В текущей конфигурации Docker-образа установщик может упасть на этапе ipa-client-install из-за бага изоляции сети Docker. Однако сам сервер (LDAP, Kerberos, DNS) поднимается успешно. Подробнее в troubleshooting.
