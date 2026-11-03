@@ -59,3 +59,16 @@
 *   Конфликт cgroups v2 (`--skip-mem-check`).
 *   Конфликт с системным `systemd-resolved`.
 *   Ошибка `ipa-client-install` в Docker и правка `resolv.conf`.
+
+### [Lab 05 — Файловый сервер Linux: NFS и Samba](./05-nfs-samba/)
+
+*   Развертывание NFS-сервера для Linux-клиентов (экспорт каталогов, `root_squash`).
+*   Установка и настройка Samba с интеграцией в домен Active Directory (`realm join`, `net ads join`).
+*   Проверка доменной аутентификации через `wbinfo` и `getent`.
+*   Монтирование Windows-шары с Linux-клиента через CIFS (`cifs-utils`).
+
+**Разобранные проблемы:** [troubleshooting](./05-nfs-samba/)
+
+*   Проблемы с DNS (`Temporary failure in name resolution`) и Kerberos (кириллическое имя администратора).
+*   Конфликт `sssd` и `winbind` при вводе в домен.
+*   Известная проблема совместимости Windows 11 24H2 и Samba 4.15 (ошибка 67 при подключении к SMB-шаре).
