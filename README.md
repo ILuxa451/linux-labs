@@ -84,3 +84,15 @@
 **Разобранные проблемы:** [troubleshooting](./06-git-infra/)
 
 *   Проблема с путями при создании Git-хуков в подпапке (решение через абсолютные пути).
+### [Lab 07 — Автоматизация с Ansible](./07-ansible/)
+
+*   Установка и настройка Ansible (Control Node + Managed Node).
+*   Настройка SSH-доступа без пароля (`ssh-copy-id`).
+*   Создание Inventory (`inventory.ini`) и проверка связи (`ansible -m ping`).
+*   Выполнение ad-hoc команд (управление пакетами, копирование файлов).
+*   Написание Playbook: `bootstrap.yml` (базовые настройки) и `deploy_nginx.yml` (установка Nginx + кастомная страница с Jinja2 + Handlers).
+
+**Разобранные проблемы:** [troubleshooting](./07-ansible/)
+
+*   Ошибка `Missing sudo password` (решено настройкой NOPASSWD в sudoers на клиенте).
+*   Ошибка `Permission denied (publickey)` при запуске Ansible через `sudo` (решено запуском от имени обычного пользователя).
