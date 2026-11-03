@@ -1,0 +1,6 @@
+---
+- name: Test PostgreSQL Role
+  hosts: webservers
+  become: yes
+  roles:
+    - role: postgresql

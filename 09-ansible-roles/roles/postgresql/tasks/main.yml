@@ -1,0 +1,19 @@
+---
+- name: Include distribution-specific variables
+  ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - postgresql_version is defined
+    fail_msg: "postgresql_version must be defined"
+  tags: always
+
+- name: Install PostgreSQL
+  ansible.builtin.include_tasks: install.yml
+  tags: postgresql_install
+
+- name: Configure PostgreSQL
+  ansible.builtin.include_tasks: configure.yml
+  tags: postgresql_config---
+# tasks file for roles/postgresql

@@ -109,3 +109,15 @@
 
 *   Решение ошибок `item is undefined` и `undefined variable` при использовании циклов и условий.
 *   Настройка прав доступа к SSL-ключам для Nginx.
+
+### [Lab 09 — Ansible Roles (PostgreSQL)](./09-ansible-roles/)
+
+*   Создание переиспользуемой роли через `ansible-galaxy init`.
+*   Разделение логики по файлам (`tasks`, `defaults`, `handlers`, `templates`).
+*   Написание шаблона конфига `postgresql.conf.j2`.
+*   Использование хендлера для перезапуска службы при изменении конфига.
+
+**Разобранные проблемы:** [troubleshooting](./09-ansible-roles/)
+
+*   Решение конфликтов YAML при инициализации роли.
+*   Адаптация под версию PostgreSQL в Ubuntu 20.04.

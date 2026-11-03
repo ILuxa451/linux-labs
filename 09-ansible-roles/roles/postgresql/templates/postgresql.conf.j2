@@ -1,0 +1,29 @@
+# {{ ansible_managed }}
+# PostgreSQL configuration file
+
+# FILE LOCATIONS
+data_directory = '/var/lib/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}'
+hba_file = '/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}/pg_hba.conf'
+ident_file = '/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}/pg_ident.conf'
+
+# CONNECTIONS AND AUTHENTICATION
+listen_addresses = '{{ postgresql_listen_addresses | join(",") }}'
+port = {{ postgresql_port }}
+max_connections = 100
+
+# RESOURCE USAGE
+shared_buffers = {{ postgresql_shared_buffers }}
+work_mem = {{ postgresql_work_mem }}
+maintenance_work_mem = {{ postgresql_maintenance_work_mem }}
+
+# WRITE AHEAD LOG
+wal_level = replica
+synchronous_commit = on
+
+# REPLICATION
+max_wal_senders = 10
+wal_keep_segments = 32
+
+# QUERY TUNING
+random_page_cost = 1.1
+effective_cache_size = 4GB
