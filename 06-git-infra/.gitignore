@@ -1,0 +1,17 @@
+# Игнорируем секреты
+*.key
+*.pem
+*.crt
+id_rsa
+id_rsa.pub
+*.env
+secrets/
+.vault_password
+# Игнорируем временные файлы
+*.log
+*.tmp
+*.swp
+*~
+.DS_Store
+backups/
+temp/
