@@ -96,3 +96,16 @@
 
 *   Ошибка `Missing sudo password` (решено настройкой NOPASSWD в sudoers на клиенте).
 *   Ошибка `Permission denied (publickey)` при запуске Ansible через `sudo` (решено запуском от имени обычного пользователя).
+
+### [Lab 08 — Продвинутый Ansible (Templates, Vars, Handlers)](./08-ansible-advanced/)
+
+*   Структурирование переменных (`group_vars`, `host_vars`).
+*   Использование Jinja2-шаблонов для генерации конфигов Nginx.
+*   Циклы (`loop`) и условные операторы (`when`, `if`).
+*   Хендлеры для перезагрузки служб при изменении конфигов.
+*   Генерация самоподписанных SSL-сертификатов.
+
+**Разобранные проблемы:** [troubleshooting](./08-ansible-advanced/)
+
+*   Решение ошибок `item is undefined` и `undefined variable` при использовании циклов и условий.
+*   Настройка прав доступа к SSL-ключам для Nginx.

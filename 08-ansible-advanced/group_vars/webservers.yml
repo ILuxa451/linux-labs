@@ -1,0 +1,27 @@
+---
+# Настройки Nginx
+nginx_version: "stable"
+nginx_worker_processes: "auto"
+nginx_user: "www-data"
+
+# СПИСОК СЕРВИСОВ - Ключевая концепция!
+# Мы описываем инфраструктуру как данные.
+web_services:
+  - name: "main_portal"
+    domain: "portal.company.local"
+    listen_port: 80
+    backend_port: 8080
+    upstreams:
+      - "10.0.1.10:8080"
+      - "10.0.1.11:8080"
+    ssl_enabled: false
+    hsts_enabled: true
+
+  - name: "internal_api"
+    domain: "api.internal.company.local"
+    listen_port: 8443
+    backend_port: 3000
+    upstreams:
+      - "10.0.2.10:3000"
+    ssl_enabled: false   # <-- ОТКЛЮЧЕНО
+    hsts_enabled: false  # <-- ОТКЛЮЧЕНО

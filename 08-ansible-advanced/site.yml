@@ -1,0 +1,96 @@
+---
+- name: Configure base system on all servers
+  hosts: all
+  become: yes
+  tasks:
+    - name: Set timezone
+      ansible.builtin.timezone:
+        name: "{{ timezone }}"
+
+    - name: Install base packages
+      ansible.builtin.apt:
+        name: "{{ system_packages }}"
+        state: present
+
+- name: Deploy Nginx and web services
+  hosts: webservers
+  become: yes
+  handlers:
+    - import_tasks: handlers/nginx.yml
+  tasks:
+    - name: Install Nginx
+      ansible.builtin.apt:
+        name: "nginx"
+        state: present
+        update_cache: yes
+      tags: install
+
+    - name: Deploy main Nginx configuration
+      ansible.builtin.template:
+        src: templates/nginx/nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Reload Nginx
+      tags: config
+
+    - name: Ensure sites-available directory exists
+      ansible.builtin.file:
+        path: /etc/nginx/sites-available
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+      tags: config
+ 
+    - name: Generate self-signed SSL certificate
+      ansible.builtin.command:
+        cmd: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/api.key -out /etc/ssl/certs/api.crt -subj "/CN=api.internal.company.local"
+        creates: /etc/ssl/certs/api.crt
+      tags: config
+
+    - name: Generate self-signed SSL certificate
+      ansible.builtin.command:
+        cmd: openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/api.key -out /etc/ssl/certs/api.crt -subj "/CN=api.internal.company.local"
+        creates: /etc/ssl/certs/api.crt
+      tags: config
+
+    - name: Set permissions for SSL key
+      ansible.builtin.file:
+        path: /etc/ssl/private/api.key
+        owner: root
+        group: root
+        mode: '0640'
+      tags: config
+
+    - name: Deploy web service configurations
+      ansible.builtin.template:
+        src: templates/nginx/service.conf.j2
+        dest: "/etc/nginx/sites-available/{{ service.name }}.conf"
+        owner: root
+        group: root
+        mode: '0644'
+      loop: "{{ web_services }}"
+      loop_control:
+        loop_var: service
+      notify: Reload Nginx
+      tags: config
+
+    - name: Enable deployed sites (create symlinks)
+      ansible.builtin.file:
+        src: "/etc/nginx/sites-available/{{ service.name }}.conf"
+        dest: "/etc/nginx/sites-enabled/{{ service.name }}.conf"
+        state: link
+      loop: "{{ web_services }}"
+      loop_control:
+        loop_var: service
+      notify: Reload Nginx
+      tags: config
+
+    - name: Ensure Nginx service is running
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
+      tags: service

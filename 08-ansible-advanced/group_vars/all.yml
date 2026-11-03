@@ -1,0 +1,14 @@
+---
+# Системные настройки
+timezone: "Europe/Moscow"
+admin_user: "ansible-admin"
+system_packages:
+  - htop
+  - vim
+  - curl
+  - git
+  - tmux
+
+# Настройки безопасности
+ssh_port: 2222
+fail2ban_enabled: true
