@@ -1,0 +1,4 @@
+---
+- name: restart gunicorn
+  ansible.builtin.debug:
+    msg: "Gunicorn restarted (simulation)"

@@ -1,0 +1,29 @@
+---
+- name: Configure database server
+  hosts: webservers
+  become: yes
+  roles:
+    - role: postgresql
+      vars:
+        postgresql_version: "12"
+        postgresql_databases:
+          - name: "myapp_db"
+        postgresql_users:
+          - name: "myapp_user"
+            password: "SecurePass123!"
+            databases: ["myapp_db"]
+            priv: "ALL"
+      tags: database
+
+- name: Configure application servers
+  hosts: webservers
+  become: yes
+  roles:
+    - role: django_app
+      vars:
+        django_app_name: "myapp"
+        django_db_host: "localhost"
+        django_db_name: "myapp_db"
+        django_db_user: "myapp_user"
+        django_db_password: "SecurePass123!"
+      tags: application

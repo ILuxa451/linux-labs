@@ -1,0 +1,46 @@
+---
+- name: Create Django group
+  ansible.builtin.group:
+    name: "{{ django_app_group }}"
+    state: present
+
+- name: Create Django system user
+  ansible.builtin.user:
+    name: "{{ django_app_user }}"
+    group: "{{ django_app_group }}"
+    shell: /bin/bash
+    system: yes
+    create_home: yes
+# ... остальные задачи ...
+- name: Create Django system user
+  ansible.builtin.user:
+    name: "{{ django_app_user }}"
+    group: "{{ django_app_group }}"
+    shell: /bin/bash
+    system: yes
+    create_home: yes
+
+- name: Create application directory
+  ansible.builtin.file:
+    path: "{{ django_app_path }}"
+    state: directory
+    owner: "{{ django_app_user }}"
+    group: "{{ django_app_group }}"
+    mode: '0755'
+
+- name: Create dummy manage.py (for simulation)
+  ansible.builtin.copy:
+    dest: "{{ django_app_path }}/manage.py"
+    content: |
+      #!/usr/bin/env python3
+      print("Django manage.py simulated.")
+    owner: "{{ django_app_user }}"
+    group: "{{ django_app_group }}"
+    mode: '0755'
+
+- name: Run Django migrations (simulation)
+  ansible.builtin.command:
+    cmd: "python3 {{ django_app_path }}/manage.py migrate"
+  become: yes
+  become_user: "{{ django_app_user }}"
+  notify: restart gunicorn

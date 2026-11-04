@@ -1,0 +1,16 @@
+---
+# Django Application Role Defaults
+django_app_name: "myapp"
+django_app_user: "django"
+django_app_group: "django"
+django_app_path: "/opt/{{ django_app_name }}"
+
+# Настройки Gunicorn
+django_gunicorn_workers: 3
+django_gunicorn_bind: "unix:{{ django_app_path }}/gunicorn.sock"
+
+# Настройки БД (по умолчанию)
+django_db_host: "localhost"
+django_db_port: 5432
+django_db_name: "{{ django_app_name }}_db"
+django_db_user: "{{ django_app_name }}_user"
