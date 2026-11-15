@@ -1,0 +1,23 @@
+# Ansible
+*.retry
+*.log
+.vault_pass
+vault_pass*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Molecule
+.molecule/
+molecule/*/__pycache__/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+site.yml.bak

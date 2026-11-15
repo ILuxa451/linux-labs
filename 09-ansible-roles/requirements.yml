@@ -1,0 +1,11 @@
+---
+# Внешние роли из Ansible Galaxy
+roles:
+  - src: geerlingguy.postgresql
+    version: "3.0.0"
+    name: postgresql_geerlingguy
+
+# Коллекции (более новый формат)
+collections:
+  - name: community.general
+    version: ">=5.0.0"

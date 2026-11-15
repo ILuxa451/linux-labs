@@ -87,3 +87,4 @@
 
 **Успешное выполнение после разделения групп и настройки Vault:**
 ![Ansible Vault & Tags Success](images/ansible-vault-tags-success.png)
+

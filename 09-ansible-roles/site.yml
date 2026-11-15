@@ -1,7 +1,18 @@
 ---
-- name: Configure database server
-  hosts: webservers
-  become: yes
+- name: Configure database servers
+  hosts: dbservers
+  become: true
+  tags: [database, db]
+  vars_files:
+    - group_vars/prod/vault.yml
+  pre_tasks:
+    - name: Gather facts (always)
+      ansible.builtin.setup:
+      tags: always
+    - name: Publish DB host IP as a fact
+      ansible.builtin.set_fact:
+        db_host_ip: "{{ ansible_default_ipv4.address }}"
+      tags: always
   roles:
     - role: postgresql
       vars:
@@ -10,20 +21,29 @@
           - name: "myapp_db"
         postgresql_users:
           - name: "myapp_user"
-            password: "SecurePass123!"
+            password: "{{ vault_blog_db_password }}"
             databases: ["myapp_db"]
             priv: "ALL"
-      tags: database
 
 - name: Configure application servers
-  hosts: webservers
-  become: yes
+  hosts: appservers
+  become: true
+  tags: [application, app]
+  vars_files:
+    - group_vars/prod/vault.yml
+  pre_tasks:
+    - name: Get DB host IP from dbservers group
+      ansible.builtin.set_fact:
+        db_host: >-
+          {{
+            hostvars[groups['dbservers'][0]]['db_host_ip']
+            | default(hostvars[groups['dbservers'][0]]['ansible_default_ipv4']['address'])
+          }}
   roles:
     - role: django_app
       vars:
         django_app_name: "myapp"
-        django_db_host: "localhost"
+        django_db_host: "{{ db_host }}"
         django_db_name: "myapp_db"
         django_db_user: "myapp_user"
-        django_db_password: "SecurePass123!"
-      tags: application
+        django_db_password: "{{ vault_blog_db_password }}"

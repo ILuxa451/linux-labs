@@ -1,3 +1,4 @@
+---
 all:
   children:
     webservers:
@@ -6,3 +7,10 @@ all:
           ansible_host: 192.168.3.60
           ansible_user: test
           ansible_python_interpreter: /usr/bin/python3
+
+    dbservers:
+      hosts:
+        web1:
+    appservers:
+      hosts:
+        web1:

@@ -11,14 +11,6 @@
     shell: /bin/bash
     system: yes
     create_home: yes
-# ... остальные задачи ...
-- name: Create Django system user
-  ansible.builtin.user:
-    name: "{{ django_app_user }}"
-    group: "{{ django_app_group }}"
-    shell: /bin/bash
-    system: yes
-    create_home: yes
 
 - name: Create application directory
   ansible.builtin.file:
@@ -33,7 +25,16 @@
     dest: "{{ django_app_path }}/manage.py"
     content: |
       #!/usr/bin/env python3
-      print("Django manage.py simulated.")
+      import os, sys
+      marker = os.path.join(os.path.dirname(__file__), '.migrated')
+      if len(sys.argv) > 1 and sys.argv[1] == 'migrate':
+          if os.path.exists(marker):
+              print("No migrations to apply")
+          else:
+              print("Applying migrations...")
+              open(marker, 'w').close()
+      else:
+          print("Django manage.py simulated.")
     owner: "{{ django_app_user }}"
     group: "{{ django_app_group }}"
     mode: '0755'
@@ -41,6 +42,7 @@
 - name: Run Django migrations (simulation)
   ansible.builtin.command:
     cmd: "python3 {{ django_app_path }}/manage.py migrate"
+    creates: "{{ django_app_path }}/.migrated"
   become: yes
   become_user: "{{ django_app_user }}"
   notify: restart gunicorn

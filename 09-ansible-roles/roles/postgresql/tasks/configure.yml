@@ -7,3 +7,10 @@
     group: postgres
     mode: '0644'
   notify: restart postgresql
+- name: Allow connection from app server in pg_hba.conf
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/{{ postgresql_cluster_name }}/pg_hba.conf"
+    line: "host    all    all    192.168.3.60/32    md5"
+    state: present
+    insertbefore: "^# IPv4 local connections:"
+  notify: restart postgresql
