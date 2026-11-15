@@ -131,3 +131,17 @@
 *   Ошибка `undefined variable 'db_host_ip'` при запуске с тегами (решено через `tags: always`).
 *   Разрешение подключения к БД по внешнему IP в `pg_hba.conf`.
 *   Исправление неидемпотентного запуска миграций Django (использование `creates`).
+
+### [Lab 10 — Ansible: Мониторинг (Prometheus)](./10-ansible-monitoring/)
+
+*   Создание роли Ansible для установки Prometheus из бинарников (в обход apt).
+*   Настройка Node Exporter для сбора системных метрик (CPU, RAM, Диски).
+*   Генерация конфигурации Prometheus через шаблоны Jinja2.
+*   Работа с Pull-моделью сбора метрик.
+
+**Разобранные проблемы:** [troubleshooting](./10-ansible-monitoring/)
+
+*   Ошибка `when` is not a valid attribute for a Play (исправление логики плейбука).
+*   Отсутствие файла `Debian.yml` при вызове `include_vars`.
+*   Блокировка порта 9090 файрволом UFW.
+*   Проблема с `sudo` при локальном запуске Ansible.
