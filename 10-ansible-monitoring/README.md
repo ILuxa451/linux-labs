@@ -48,11 +48,11 @@
 
 ## 📸 Визуализация
 
-   Успешное выполнение Ansible-плейбука (идемпотентность):
-   https://images/ansible-run-success.png
+**Успешное выполнение Ansible-плейбука (идемпотентность):**
+![Успешный запуск](images/ansible-run-success.png)
 
-   Статус всех таргетов UP в веб-интерфейсе Prometheus:
-   https://images/prometheus-targets-up.png
+**Статус всех таргетов UP в веб-интерфейсе Prometheus:**
+![Статус таргетов](images/prometheus-targets-up.png)
 
-   Выполнение PromQL-запроса (график загрузки CPU):
-   https://images/prometheus-cpu-graph.png
+**Выполнение PromQL-запроса (график загрузки CPU):**
+![График CPU](images/prometheus-cpu-graph.png)
