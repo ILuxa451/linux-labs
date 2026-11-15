@@ -111,15 +111,23 @@
 *   Решение ошибок `item is undefined` и `undefined variable` при использовании циклов и условий.
 *   Настройка прав доступа к SSL-ключам для Nginx.
 
-### [Lab 09 — Ansible Roles (PostgreSQL)](./09-ansible-roles/)
+### [Lab 09 — Ansible Roles: Продвинутая оркестрация (PostgreSQL + Django)](./09-ansible-roles/)
 
-*   Создание переиспользуемой роли через `ansible-galaxy init`.
-*   Разделение логики по файлам (`tasks`, `defaults`, `handlers`, `templates`).
+*   Создание переиспользуемых ролей (`postgresql`, `django_app`) через `ansible-galaxy init`.
+*   Разделение логики по файлам (`tasks`, `defaults`, `handlers`, `templates`, `vars`).
 *   Написание шаблона конфига `postgresql.conf.j2`.
-*   Использование хендлера для перезапуска службы при изменении конфига.
-*   **Связывание ролей:** Создана вторая роль `django_app` и главный плейбук `site.yml`, который оркестрирует работу обеих ролей.
+*   **Связывание ролей:** Главный плейбук `site.yml` оркестрирует работу обеих ролей.
+*   **Разделение хостов (теги):** Логическое разделение на `dbservers` и `appservers` в `site.yml` с использованием тегов (`--tags database`, `--tags application`).
+*   **Передача данных через Facts:** Получение IP-адреса БД через `ansible_default_ipv4` и передача его в роль приложения через `hostvars` и `set_fact`.
+*   **Управление секретами (Ansible Vault):** Шифрование паролей БД в `group_vars/prod/vault.yml` и запуск плейбука с `--ask-vault-pass`.
+*   **CI/CD и Molecule:** Настройка `yamllint`, `ansible-lint` и GitHub Actions (`.github/workflows/ci.yml`). Инициализация тестового сценария в Molecule.
+*   **Идемпотентность:** Настройка тасков (создание маркер-файлов) для обеспечения `changed=0` при повторных запусках.
 
 **Разобранные проблемы:** [troubleshooting](./09-ansible-roles/)
 
 *   Решение конфликтов YAML при инициализации роли.
-*   Адаптация под версию PostgreSQL в Ubuntu 20.04.
+*   Адаптация под версию PostgreSQL в Ubuntu 20.04 (откат с 14 на 12).
+*   Отладка прав доступа (`become`) и NOPASSWD в sudoers.
+*   Ошибка `undefined variable 'db_host_ip'` при запуске с тегами (решено через `tags: always`).
+*   Разрешение подключения к БД по внешнему IP в `pg_hba.conf`.
+*   Исправление неидемпотентного запуска миграций Django (использование `creates`).
