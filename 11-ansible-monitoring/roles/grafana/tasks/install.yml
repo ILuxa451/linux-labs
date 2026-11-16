@@ -1,0 +1,64 @@
+---
+- name: Create installation directory
+  ansible.builtin.file:
+    path: "{{ grafana_install_path }}"
+    state: directory
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: '0755'
+
+- name: Create data directory
+  ansible.builtin.file:
+    path: "{{ grafana_data_path }}"
+    state: directory
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: '0750'
+
+- name: Create logs directory
+  ansible.builtin.file:
+    path: "{{ grafana_logs_path }}"
+    state: directory
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: '0750'
+
+- name: Download Grafana archive
+  ansible.builtin.get_url:
+    url: "https://dl.grafana.com/oss/release/grafana-{{ grafana_version }}.linux-{{ grafana_architecture }}.tar.gz"
+    dest: "/tmp/grafana-{{ grafana_version }}.tar.gz"
+    mode: '0644'
+
+- name: Extract Grafana archive
+  ansible.builtin.unarchive:
+    src: "/tmp/grafana-{{ grafana_version }}.tar.gz"
+    dest: "{{ grafana_install_path }}"
+    remote_src: yes
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    creates: "{{ grafana_install_path }}/grafana-{{ grafana_version }}/bin/grafana-server"
+
+- name: Find extracted Grafana directory
+  ansible.builtin.find:
+    paths: "{{ grafana_install_path }}"
+    file_type: directory
+    patterns: "grafana*"
+  register: grafana_dir
+
+- name: Create symlink to current version
+  ansible.builtin.file:
+    src: "{{ grafana_dir.files[0].path }}"
+    dest: "{{ grafana_install_path }}/current"
+    state: link
+    force: yes
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+
+- name: Create symlinks for binaries
+  ansible.builtin.file:
+    src: "{{ grafana_install_path }}/current/bin/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    state: link
+  loop:
+    - grafana-server
+    - grafana-cli

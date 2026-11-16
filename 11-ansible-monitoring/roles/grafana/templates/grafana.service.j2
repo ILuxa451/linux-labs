@@ -1,0 +1,20 @@
+[Unit]
+Description=Grafana instance
+Documentation=https://grafana.com/docs/
+After=network.target
+
+[Service]
+User={{ grafana_user }}
+Group={{ grafana_group }}
+Type=simple
+WorkingDirectory={{ grafana_install_path }}/current
+ExecStart=/usr/local/bin/grafana-server \
+  -homepath {{ grafana_install_path }}/current \
+  -config {{ grafana_config_path }}/grafana.ini
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=10s
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

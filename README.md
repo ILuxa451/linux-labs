@@ -145,3 +145,17 @@
 *   Отсутствие файла `Debian.yml` при вызове `include_vars`.
 *   Блокировка порта 9090 файрволом UFW.
 *   Проблема с `sudo` при локальном запуске Ansible.
+
+### [Lab 11 — Ansible: Визуализация (Grafana)](./11-ansible-monitoring/)
+
+*   Создание роли Ansible для установки Grafana из бинарников.
+*   Настройка автоматического подключения к Prometheus через Provisioning.
+*   Автоматическая загрузка готовых дашбордов с grafana.com (ID 1860).
+*   Создание собственных панелей визуализации (PromQL).
+
+**Разобранные проблемы:** [troubleshooting](./11-ansible-monitoring/)
+
+*   Отсутствие файла `Debian.yml` при вызове `include_vars`.
+*   Блокировка порта 3000 файрволом UFW.
+*   Ошибка парсинга YAML (DataSource provisioning error) в Grafana.
+*   Проблема с именованием папок при создании симлинков (grafana-v10.4.2).

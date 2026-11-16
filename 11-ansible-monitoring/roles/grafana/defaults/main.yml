@@ -1,0 +1,41 @@
+---
+# Версия Grafana
+grafana_version: 10.4.2
+grafana_architecture: amd64
+
+# Порт и адрес
+grafana_port: 3000
+grafana_server_listen: "0.0.0.0"
+
+# Пути
+grafana_install_path: /opt/grafana
+grafana_config_path: /etc/grafana
+grafana_data_path: /var/lib/grafana
+grafana_logs_path: /var/log/grafana
+
+# Пользователь
+grafana_user: grafana
+grafana_group: grafana
+
+# Админ (в реальности меняем через Vault)
+grafana_admin_user: admin
+grafana_admin_password: admin
+grafana_anonymous_enabled: false
+
+# Источники данных (подключаем наш Prometheus)
+grafana_datasources:
+  - name: Prometheus
+    type: prometheus
+    url: http://localhost:9090
+    access: proxy
+    is_default: yes
+
+# Дашборды (ID 1860 - Node Exporter Full)
+grafana_dashboards:
+  - dashboard_id: 1860
+    revision_id: 37
+    name: node_exporter_full
+    datasource: Prometheus
+
+grafana_server_domain: ""
+grafana_smtp_enabled: false

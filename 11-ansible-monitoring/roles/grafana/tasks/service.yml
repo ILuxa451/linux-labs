@@ -1,0 +1,18 @@
+---
+- name: Deploy systemd unit file
+  ansible.builtin.template:
+    src: grafana.service.j2
+    dest: /etc/systemd/system/grafana.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - systemctl daemon-reload
+    - restart grafana
+
+- name: Enable and start Grafana service
+  ansible.builtin.systemd:
+    name: grafana
+    enabled: yes
+    state: started
+    daemon_reload: yes

@@ -1,0 +1,18 @@
+---
+- name: Deploy systemd unit file
+  ansible.builtin.template:
+    src: prometheus.service.j2
+    dest: /etc/systemd/system/prometheus.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - systemctl daemon-reload
+    - restart prometheus
+
+- name: Enable and start Prometheus service
+  ansible.builtin.systemd:
+    name: prometheus
+    enabled: yes
+    state: started
+    daemon_reload: yes
