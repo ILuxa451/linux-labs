@@ -1,0 +1,22 @@
+---
+- name: Increase vm.max_map_count
+  ansible.posix.sysctl:
+    name: vm.max_map_count
+    value: '262144'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Increase file descriptors limit (soft)
+  community.general.pam_limits:
+    domain: "{{ elasticsearch_user }}"
+    limit_type: soft
+    limit_item: nofile
+    value: 65535
+
+- name: Increase file descriptors limit (hard)
+  community.general.pam_limits:
+    domain: "{{ elasticsearch_user }}"
+    limit_type: hard
+    limit_item: nofile
+    value: 65535

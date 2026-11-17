@@ -1,0 +1,10 @@
+---
+filebeat_version: "8.13.4"
+filebeat_output_elasticsearch_hosts:
+  - "http://localhost:9200"
+filebeat_input_paths:
+  - /var/log/*.log
+  - /var/log/syslog
+  - /var/log/auth.log
+kibana_host: "localhost:5601"
+

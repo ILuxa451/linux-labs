@@ -1,0 +1,19 @@
+# {{ ansible_managed }}
+filebeat.inputs:
+- type: filestream
+  enabled: true
+  id: default-logs
+  paths:
+{% for path in filebeat_input_paths %}
+    - {{ path }}
+{% endfor %}
+
+output.elasticsearch:
+  hosts: {{ filebeat_output_elasticsearch_hosts | to_json }}
+
+setup.kibana:
+  host: "{{ kibana_host }}"
+
+setup.dashboards.enabled: true
+setup.template.enabled: true
+setup.template.overwrite: false

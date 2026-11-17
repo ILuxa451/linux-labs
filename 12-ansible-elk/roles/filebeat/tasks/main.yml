@@ -1,0 +1,7 @@
+---
+- name: Install Filebeat
+  ansible.builtin.include_tasks: install.yml
+- name: Configure Filebeat
+  ansible.builtin.include_tasks: configure.yml
+- name: Setup service
+  ansible.builtin.include_tasks: service.yml

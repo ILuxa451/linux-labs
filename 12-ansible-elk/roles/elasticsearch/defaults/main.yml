@@ -1,0 +1,36 @@
+---
+# Версия Elasticsearch (адаптированная под реальность)
+elasticsearch_version: "8.13.4"
+
+# Имя кластера
+elasticsearch_cluster_name: monitoring
+elasticsearch_node_name: "{{ inventory_hostname }}"
+
+# Сетевые настройки
+elasticsearch_network_host: 0.0.0.0
+elasticsearch_http_port: 9200
+elasticsearch_transport_port: 9300
+
+# Память (JVM heap). Для нашей VM 1g - норм.
+elasticsearch_heap_size: 1g
+
+# Пути
+elasticsearch_data_path: /var/lib/elasticsearch
+elasticsearch_log_path: /var/log/elasticsearch
+
+# Пользователь
+elasticsearch_user: elasticsearch
+elasticsearch_group: elasticsearch
+
+# Безопасность (для лабы отключаем, чтобы не возиться с сертификатами)
+elasticsearch_security_enabled: false
+elasticsearch_password: ""
+
+# Список узлов
+elasticsearch_nodes:
+  - "{{ ansible_default_ipv4.address }}"
+
+# Настройки индексов
+elasticsearch_index_settings:
+  number_of_shards: 1
+  number_of_replicas: 0

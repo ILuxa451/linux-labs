@@ -1,0 +1,19 @@
+---
+- name: Deploy Elasticsearch
+  hosts: monitoring
+  become: yes
+  roles:
+    - role: elasticsearch
+  tags: elasticsearch
+- name: Deploy Kibana
+  hosts: monitoring
+  become: yes
+  roles:
+    - role: kibana
+  tags: kibana
+- name: Deploy Filebeat
+  hosts: monitoring
+  become: yes
+  roles:
+    - role: filebeat
+  tags: filebeat

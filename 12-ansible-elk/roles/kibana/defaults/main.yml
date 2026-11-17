@@ -1,0 +1,10 @@
+---
+kibana_version: "8.13.4"
+kibana_server_host: "0.0.0.0"
+kibana_server_port: 5601
+kibana_server_name: "{{ inventory_hostname }}"
+kibana_elasticsearch_hosts:
+  - "http://localhost:9200"
+kibana_index: ".kibana"
+kibana_locale: "ru-RU"
+kibana_security_enabled: false

@@ -159,3 +159,17 @@
 *   Блокировка порта 3000 файрволом UFW.
 *   Ошибка парсинга YAML (DataSource provisioning error) в Grafana.
 *   Проблема с именованием папок при создании симлинков (grafana-v10.4.2).
+
+### [Lab 12 — Ansible: Централизованное логирование (ELK Stack)](./12-ansible-elk/)
+
+*   Создание ролей Ansible для развертывания Elasticsearch, Kibana и Filebeat.
+*   Настройка системных параметров (`vm.max_map_count`) для работы Elasticsearch.
+*   Обход блокировки официальных репозиториев Elastic (использование зеркала Яндекса).
+*   Поиск по логам в Kibana с помощью языка KQL.
+
+**Разобранные проблемы:** [troubleshooting](./12-ansible-elk/)
+
+*   Ошибка `403 Forbidden` при скачивании Elasticsearch/Filebeat (решено использованием зеркала Яндекса).
+*   Ошибка `node settings must not contain any index level settings` (удалены устаревшие настройки из конфига).
+*   Ошибка `Unknown configuration key(s): "kibana.index"` (параметр удален в Kibana 8.x).
+*   Падение службы Kibana из-за ошибки `xpack.security.enabled` (параметр удален из конфига).

@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+server.host: {{ kibana_server_host }}
+server.port: {{ kibana_server_port }}
+server.name: {{ kibana_server_name }}
+
+elasticsearch.hosts: {{ kibana_elasticsearch_hosts | to_json }}
+
+i18n.locale: {{ kibana_locale }}

@@ -1,0 +1,7 @@
+---
+- name: Install Kibana
+  ansible.builtin.include_tasks: install.yml
+- name: Configure Kibana
+  ansible.builtin.include_tasks: configure.yml
+- name: Setup service
+  ansible.builtin.include_tasks: service.yml

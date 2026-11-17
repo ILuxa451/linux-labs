@@ -1,0 +1,16 @@
+---
+- name: Download Kibana .deb package from Yandex Mirror
+  ansible.builtin.get_url:
+    url: "https://mirror.yandex.ru/mirrors/elastic/8/pool/main/k/kibana/kibana-{{ kibana_version }}-amd64.deb"
+    dest: "/tmp/kibana-{{ kibana_version }}.deb"
+    mode: '0644'
+
+- name: Install Kibana from .deb
+  ansible.builtin.apt:
+    deb: "/tmp/kibana-{{ kibana_version }}.deb"
+    state: present
+
+- name: Prevent Kibana from being upgraded automatically
+  ansible.builtin.dpkg_selections:
+    name: kibana
+    selection: hold

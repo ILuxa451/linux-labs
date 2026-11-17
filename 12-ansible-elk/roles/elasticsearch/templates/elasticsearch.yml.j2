@@ -1,0 +1,34 @@
+# {{ ansible_managed }}
+# Elasticsearch configuration file
+cluster.name: {{ elasticsearch_cluster_name }}
+node.name: {{ elasticsearch_node_name }}
+
+path.data: {{ elasticsearch_data_path }}
+path.logs: {{ elasticsearch_log_path }}
+
+network.host: {{ elasticsearch_network_host }}
+http.port: {{ elasticsearch_http_port }}
+transport.port: {{ elasticsearch_transport_port }}
+
+discovery.seed_hosts:
+{% for node in elasticsearch_nodes %}
+  - {{ node }}
+{% endfor %}
+cluster.initial_master_nodes:
+{% for node in elasticsearch_nodes %}
+  - {{ node }}
+{% endfor %}
+
+{% if elasticsearch_security_enabled %}
+xpack.security.enabled: true
+{% else %}
+xpack.security.enabled: false
+xpack.security.enrollment.enabled: false
+xpack.security.transport.ssl.enabled: false
+xpack.security.http.ssl.enabled: false
+{% endif %}
+
+#index.number_of_shards: {{ elasticsearch_index_settings.number_of_shards }}
+#index.number_of_replicas: {{ elasticsearch_index_settings.number_of_replicas }}
+
+action.destructive_requires_name: true

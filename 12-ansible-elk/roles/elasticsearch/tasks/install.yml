@@ -1,0 +1,17 @@
+---
+- name: Download Elasticsearch .deb package from Yandex Mirror
+  ansible.builtin.get_url:
+    # Ссылка на зеркало Яндекса. Обрати внимание на путь: /8/ и версию в имени файла.
+    url: "https://mirror.yandex.ru/mirrors/elastic/8/pool/main/e/elasticsearch/elasticsearch-{{ elasticsearch_version }}-amd64.deb"
+    dest: "/tmp/elasticsearch-{{ elasticsearch_version }}.deb"
+    mode: '0644'
+
+- name: Install Elasticsearch from .deb
+  ansible.builtin.apt:
+    deb: "/tmp/elasticsearch-{{ elasticsearch_version }}.deb"
+    state: present
+
+- name: Prevent Elasticsearch from being upgraded automatically
+  ansible.builtin.dpkg_selections:
+    name: elasticsearch
+    selection: hold

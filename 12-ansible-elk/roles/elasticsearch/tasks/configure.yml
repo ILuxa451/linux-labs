@@ -1,0 +1,18 @@
+---
+- name: Deploy elasticsearch.yml
+  ansible.builtin.template:
+    src: elasticsearch.yml.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: root
+    group: "{{ elasticsearch_group }}"
+    mode: '0640'
+  notify: restart elasticsearch
+
+- name: Deploy JVM options
+  ansible.builtin.template:
+    src: jvm.options.j2
+    dest: /etc/elasticsearch/jvm.options.d/custom.options
+    owner: root
+    group: "{{ elasticsearch_group }}"
+    mode: '0644'
+  notify: restart elasticsearch

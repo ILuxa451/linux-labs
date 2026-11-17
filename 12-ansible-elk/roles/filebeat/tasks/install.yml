@@ -1,0 +1,16 @@
+---
+- name: Download Filebeat .deb package from Yandex Mirror
+  ansible.builtin.get_url:
+    url: "https://mirror.yandex.ru/mirrors/elastic/8/pool/main/f/filebeat/filebeat-{{ filebeat_version }}-amd64.deb"
+    dest: "/tmp/filebeat-{{ filebeat_version }}.deb"
+    mode: '0644'
+
+- name: Install Filebeat from .deb
+  ansible.builtin.apt:
+    deb: "/tmp/filebeat-{{ filebeat_version }}.deb"
+    state: present
+
+- name: Prevent Filebeat from being upgraded automatically
+  ansible.builtin.dpkg_selections:
+    name: filebeat
+    selection: hold

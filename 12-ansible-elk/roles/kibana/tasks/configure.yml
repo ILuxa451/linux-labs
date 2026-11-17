@@ -1,0 +1,9 @@
+---
+- name: Deploy kibana.yml
+  ansible.builtin.template:
+    src: kibana.yml.j2
+    dest: /etc/kibana/kibana.yml
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart kibana

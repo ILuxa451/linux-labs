@@ -1,0 +1,7 @@
+---
+- name: Enable and start Kibana service
+  ansible.builtin.systemd:
+    name: kibana
+    enabled: yes
+    state: started
+    daemon_reload: yes
