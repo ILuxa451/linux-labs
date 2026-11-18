@@ -173,3 +173,17 @@
 *   Ошибка `node settings must not contain any index level settings` (удалены устаревшие настройки из конфига).
 *   Ошибка `Unknown configuration key(s): "kibana.index"` (параметр удален в Kibana 8.x).
 *   Падение службы Kibana из-за ошибки `xpack.security.enabled` (параметр удален из конфига).
+
+### [Lab 13 — Ansible: Настройка уведомлений и алертинга (Alertmanager)](./13-ansible-alertmanager/)
+
+*   Создание роли Ansible для установки и настройки Prometheus Alertmanager.
+*   Настройка двухканальной доставки уведомлений (`critical-group`): Telegram (для мгновенного реагирования) и Email через SMTP Яндекса (для отчётности).
+*   Настройка правил ингибирования (`inhibit_rules`) и окон тишины (`Silence`) на время регламентных работ.
+*   Проверка полного цикла инцидента: имитация падения `node_exporter` (`FIRING`) и последующее восстановление (`RESOLVED`).
+
+**Разобранные проблемы:** [troubleshooting](./13-ansible-alertmanager/)
+
+*   Таймаут подключения к `api.telegram.org` с виртуальной машины из-за блокировок провайдера (решено поднятием HTTP-прокси `tinyproxy` на хост-машине с VPN и настройкой `http_config.proxy_url`).
+*   Ошибка `cannot unmarshal !!str into int64` при запуске Alertmanager (решено приведением `chat_id` к числу через фильтр `| int` в шаблоне Jinja2).
+*   Ошибка `telebot: invalid character '<' looking for beginning of value` (решено удалением дублирующего параметра `api_url` внутри секции `telegram_configs`).
+*   Ошибка `sudo: a password is required` при запуске плейбука (решено использованием флага `--ask-become-pass`).

@@ -1,0 +1,48 @@
+---
+- name: Create installation directory
+  ansible.builtin.file:
+    path: "{{ prometheus_install_path }}"
+    state: directory
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+    mode: '0755'
+
+- name: Create data directory
+  ansible.builtin.file:
+    path: "{{ prometheus_data_path }}"
+    state: directory
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+    mode: '0750'
+
+- name: Download Prometheus archive
+  ansible.builtin.get_url:
+    url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-{{ prometheus_architecture }}.tar.gz"
+    dest: "/tmp/prometheus-{{ prometheus_version }}.tar.gz"
+    mode: '0644'
+
+- name: Extract Prometheus archive
+  ansible.builtin.unarchive:
+    src: "/tmp/prometheus-{{ prometheus_version }}.tar.gz"
+    dest: "{{ prometheus_install_path }}"
+    remote_src: yes
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+    creates: "{{ prometheus_install_path }}/prometheus-{{ prometheus_version }}.linux-{{ prometheus_architecture }}/prometheus"
+
+- name: Create symlink to current version
+  ansible.builtin.file:
+    src: "{{ prometheus_install_path }}/prometheus-{{ prometheus_version }}.linux-{{ prometheus_architecture }}"
+    dest: "{{ prometheus_install_path }}/current"
+    state: link
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+
+- name: Copy prometheus binary to /usr/local/bin
+  ansible.builtin.copy:
+    src: "{{ prometheus_install_path }}/current/prometheus"
+    dest: /usr/local/bin/prometheus
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+    mode: '0755'
+    remote_src: yes

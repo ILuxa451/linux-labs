@@ -1,0 +1,33 @@
+---
+- name: Install Prometheus and Node Exporter
+  hosts: all
+  become: yes
+  roles:
+    - role: prometheus
+      when: inventory_hostname in groups['monitoring']
+
+- name: Ensure Node Exporter on all servers
+  hosts: all
+  become: yes
+  tasks:
+    - name: Include prometheus role for node_exporter only
+      ansible.builtin.include_role:
+        name: prometheus
+        tasks_from: node_exporter.yml
+      vars:
+        node_exporter_install: true
+      when: inventory_hostname not in groups['monitoring']
+
+- name: Install Grafana
+  hosts: monitoring
+  become: yes
+  roles:
+    - role: grafana
+  tags: grafana
+
+- name: Install Alertmanager
+  hosts: monitoring
+  become: yes
+  roles:
+    - role: alertmanager
+  tags: [alertmanager, monitoring]

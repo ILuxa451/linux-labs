@@ -1,0 +1,17 @@
+○ node_exporter.service - Node Exporter
+     Loaded: loaded (/etc/systemd/system/node_exporter.service; enabled; vendor preset: enabled)
+     Active: inactive (dead) since Wed 2026-11-18 13:13:44 MSK; 11s ago
+    Process: 25609 ExecStart=/usr/local/bin/node_exporter --web.listen-address=:9100 (code=killed, signal=TERM)
+   Main PID: 25609 (code=killed, signal=TERM)
+        CPU: 1.038s
+
+ноя 18 12:47:53 server01.example.com node_exporter[25609]: ts=2026-11-18T09:47:53.691Z caller=node_exporter.go:118 level=info collector=vmstat
+ноя 18 12:47:53 server01.example.com node_exporter[25609]: ts=2026-11-18T09:47:53.691Z caller=node_exporter.go:118 level=info collector=watchdog
+ноя 18 12:47:53 server01.example.com node_exporter[25609]: ts=2026-11-18T09:47:53.691Z caller=node_exporter.go:118 level=info collector=xfs
+ноя 18 12:47:53 server01.example.com node_exporter[25609]: ts=2026-11-18T09:47:53.692Z caller=node_exporter.go:118 level=info collector=zfs
+ноя 18 12:47:53 server01.example.com node_exporter[25609]: ts=2026-11-18T09:47:53.692Z caller=tls_config.go:313 level=info msg="Listening on" address=[::]:9100
+ноя 18 12:47:53 server01.example.com node_exporter[25609]: ts=2026-11-18T09:47:53.692Z caller=tls_config.go:316 level=info msg="TLS is disabled." http2=false address=[::]:9100
+ноя 18 13:13:44 server01.example.com systemd[1]: Stopping Node Exporter...
+ноя 18 13:13:44 server01.example.com systemd[1]: node_exporter.service: Deactivated successfully.
+ноя 18 13:13:44 server01.example.com systemd[1]: Stopped Node Exporter.
+ноя 18 13:13:44 server01.example.com systemd[1]: node_exporter.service: Consumed 1.038s CPU time.
