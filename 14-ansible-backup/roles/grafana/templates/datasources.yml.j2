@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+apiVersion: 1
+
+datasources:
+{% for ds in grafana_datasources %}
+  - name: {{ ds.name }}
+    type: {{ ds.type }}
+    access: {{ ds.access }}
+    url: {{ ds.url }}
+    isDefault: {{ ds.is_default | default(false) }}
+    version: 1
+    editable: false
+{% endfor %}

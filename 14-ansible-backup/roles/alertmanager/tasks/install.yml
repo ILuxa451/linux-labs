@@ -1,0 +1,61 @@
+---
+- name: Create alertmanager group
+  ansible.builtin.group:
+    name: "{{ alertmanager_group }}"
+    state: present
+    system: yes
+
+- name: Create alertmanager user
+  ansible.builtin.user:
+    name: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_group }}"
+    shell: /usr/sbin/nologin
+    system: yes
+    create_home: no
+
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_group }}"
+    mode: '0755'
+  loop:
+    - "{{ alertmanager_install_path }}"
+    - "{{ alertmanager_config_path }}"
+    - "{{ alertmanager_data_path }}"
+
+- name: Download Alertmanager archive
+  ansible.builtin.get_url:
+    url: "https://github.com/prometheus/alertmanager/releases/download/v{{ alertmanager_version }}/alertmanager-{{ alertmanager_version }}.linux-{{ alertmanager_architecture }}.tar.gz"
+    dest: "/tmp/alertmanager-{{ alertmanager_version }}.tar.gz"
+    mode: '0644'
+
+- name: Extract Alertmanager archive
+  ansible.builtin.unarchive:
+    src: "/tmp/alertmanager-{{ alertmanager_version }}.tar.gz"
+    dest: "{{ alertmanager_install_path }}"
+    remote_src: yes
+    owner: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_group }}"
+    creates: "{{ alertmanager_install_path }}/alertmanager-{{ alertmanager_version }}.linux-{{ alertmanager_architecture }}/alertmanager"
+
+- name: Create symlink to current version
+  ansible.builtin.file:
+    src: "{{ alertmanager_install_path }}/alertmanager-{{ alertmanager_version }}.linux-{{ alertmanager_architecture }}"
+    dest: "{{ alertmanager_install_path }}/current"
+    state: link
+    owner: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_group }}"
+
+- name: Copy binaries to /usr/local/bin
+  ansible.builtin.copy:
+    src: "{{ alertmanager_install_path }}/current/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    owner: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_group }}"
+    mode: '0755'
+    remote_src: yes
+  loop:
+    - alertmanager
+    - amtool

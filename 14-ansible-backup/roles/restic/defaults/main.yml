@@ -1,0 +1,8 @@
+---
+restic_version: "0.17.3"
+minio_access_key: "backup-sa"
+minio_secret_key: "SuperSecretMinioKey123!"
+minio_bucket: "my-company-backups"
+restic_repo: "{{ 's3:http://' + '127.0.0.1' + ':9000/' + minio_bucket + '/restic-repo' }}"
+restic_password: "SuperSecretResticPassword123!"
+restic_source_dirs: "/etc /home"

@@ -187,3 +187,16 @@
 *   Ошибка `cannot unmarshal !!str into int64` при запуске Alertmanager (решено приведением `chat_id` к числу через фильтр `| int` в шаблоне Jinja2).
 *   Ошибка `telebot: invalid character '<' looking for beginning of value` (решено удалением дублирующего параметра `api_url` внутри секции `telegram_configs`).
 *   Ошибка `sudo: a password is required` при запуске плейбука (решено использованием флага `--ask-become-pass`).
+
+### [Lab 14 — Ansible: Резервное копирование и восстановление (BorgBackup, Restic S3, Windows Backup)](./14-ansible-backup/)
+
+*   Создание ролей Ansible для автоматизации резервного копирования с помощью BorgBackup (`borgmatic`) и Restic (в S3-хранилище).
+*   Настройка политики хранения GFS (`7 daily / 4 weekly / 6 monthly`), блочной дедупликации и клиентского шифрования.
+*   Интеграция статуса бэкапов с Prometheus (`textfile collector`) и настройка алертинга `BackupFailed` в Telegram и Email.
+*   Практика резервного копирования и восстановления файлов на Windows Server (`wbadmin`).
+
+**Разобранные проблемы:** [troubleshooting](./14-ansible-backup/)
+
+*   Несрабатывание перенаправления вывода `>` в хуке `after_backup` в `borgmatic` (решено оборачиванием команды в `sh -c` и добавлением `force: no` в Ansible).
+*   Ошибка `403 Forbidden` при скачивании бинарников MinIO (решено развертыванием локального S3-эмулятора на порту `9000`).
+*   Ограничение `wbadmin` на сохранение бэкапа на системный том `C:` (решено подключением виртуального диска VHDX).

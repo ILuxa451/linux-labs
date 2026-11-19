@@ -1,0 +1,48 @@
+---
+- name: Create provisioning directories
+  ansible.builtin.file:
+    path: "{{ grafana_config_path }}/provisioning/{{ item }}"
+    state: directory
+    owner: root
+    group: "{{ grafana_group }}"
+    mode: '0750'
+  loop:
+    - datasources
+    - dashboards
+
+- name: Deploy datasource provisioning config
+  ansible.builtin.template:
+    src: datasources.yml.j2
+    dest: "{{ grafana_config_path }}/provisioning/datasources/prometheus.yml"
+    owner: root
+    group: "{{ grafana_group }}"
+    mode: '0640'
+  notify: restart grafana
+
+- name: Deploy dashboard provisioning config
+  ansible.builtin.template:
+    src: dashboards.yml.j2
+    dest: "{{ grafana_config_path }}/provisioning/dashboards/default.yml"
+    owner: root
+    group: "{{ grafana_group }}"
+    mode: '0640'
+  notify: restart grafana
+
+- name: Create directory for dashboard files
+  ansible.builtin.file:
+    path: "{{ grafana_config_path }}/dashboards"
+    state: directory
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: '0755'
+
+- name: Download dashboards from grafana.com
+  ansible.builtin.get_url:
+    url: "https://grafana.com/api/dashboards/{{ item.dashboard_id }}/revisions/{{ item.revision_id }}/download"
+    dest: "{{ grafana_config_path }}/dashboards/{{ item.name }}.json"
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: '0644'
+  loop: "{{ grafana_dashboards }}"
+  when: grafana_dashboards is defined
+  notify: restart grafana

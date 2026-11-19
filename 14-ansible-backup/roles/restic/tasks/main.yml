@@ -1,0 +1,81 @@
+---
+- name: Install Restic and S3 emulator dependencies via apt
+  ansible.builtin.apt:
+    name:
+      - restic
+      - python3-pip
+      - python3-venv
+    state: present
+
+- name: Install moto S3 server into isolated venv
+  ansible.builtin.pip:
+    name:
+      - "moto[s3,server]"
+      - flask
+      - flask-cors
+    virtualenv: /opt/s3-emulator
+    virtualenv_command: python3 -m venv
+
+- name: Create S3 emulator systemd service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/s3-emulator.service
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Local S3 Storage Emulator
+      After=network.target
+
+      [Service]
+      ExecStart=/opt/s3-emulator/bin/moto_server -H 127.0.0.1 -p 9000
+      Restart=always
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Start and enable S3 emulator service
+  ansible.builtin.systemd:
+    name: s3-emulator
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- name: Wait for S3 port 9000
+  ansible.builtin.wait_for:
+    port: 9000
+    timeout: 15
+
+- name: Create S3 bucket via Python script
+  ansible.builtin.command: >
+    /opt/s3-emulator/bin/python -c "import boto3;
+    s3 = boto3.client('s3', endpoint_url='http://127.0.0.1:9000',
+    aws_access_key_id='{{ minio_access_key }}', aws_secret_access_key='{{ minio_secret_key }}');
+    buckets = [b['Name'] for b in s3.list_buckets().get('Buckets', [])];
+    s3.create_bucket(Bucket='{{ minio_bucket }}') if '{{ minio_bucket }}' not in buckets else None"
+  changed_when: false
+
+- name: Initialize Restic S3 repository
+  ansible.builtin.command: /usr/bin/restic init
+  environment:
+    RESTIC_REPOSITORY: "{{ restic_repo }}"
+    RESTIC_PASSWORD: "{{ restic_password }}"
+    AWS_ACCESS_KEY_ID: "{{ minio_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ minio_secret_key }}"
+  register: restic_init_result
+  failed_when: restic_init_result.rc != 0 and 'already initialized' not in restic_init_result.stderr
+  changed_when: restic_init_result.rc == 0
+
+- name: Deploy backup-to-s3.sh script
+  ansible.builtin.template:
+    src: backup-to-s3.sh.j2
+    dest: /usr/local/bin/backup-to-s3.sh
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: Add Restic S3 backup to cron (03:00 daily)
+  ansible.builtin.cron:
+    name: "Restic S3 Backup"
+    hour: "3"
+    minute: "0"
+    job: "/usr/local/bin/backup-to-s3.sh"
+    user: root

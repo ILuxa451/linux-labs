@@ -1,0 +1,60 @@
+# {{ ansible_managed }}
+global:
+  resolve_timeout: {{ alertmanager_config.global.resolve_timeout }}
+{% if alertmanager_config.global.smtp_smarthost is defined and alertmanager_config.global.smtp_smarthost %}
+  smtp_smarthost: "{{ alertmanager_config.global.smtp_smarthost }}"
+  smtp_from: "{{ alertmanager_config.global.smtp_from }}"
+  smtp_auth_username: "{{ alertmanager_config.global.smtp_auth_username }}"
+  smtp_auth_password: "{{ alertmanager_config.global.smtp_auth_password }}"
+  smtp_require_tls: {{ alertmanager_config.global.smtp_require_tls | default(true) | lower }}
+{% endif %}
+{% if alertmanager_config.global.telegram_api_url is defined and alertmanager_config.global.telegram_api_url %}
+{% endif %}
+
+route:
+  receiver: {{ alertmanager_config.route.receiver }}
+  group_by: {{ alertmanager_config.route.group_by | to_json }}
+  group_wait: {{ alertmanager_config.route.group_wait }}
+  group_interval: {{ alertmanager_config.route.group_interval }}
+  repeat_interval: {{ alertmanager_config.route.repeat_interval }}
+{% if alertmanager_config.route.routes is defined %}
+  routes:
+{{ alertmanager_config.route.routes | to_nice_yaml(indent=2) | indent(4, true) }}
+{% endif %}
+
+receivers:
+{% for receiver in alertmanager_config.receivers %}
+  - name: {{ receiver.name }}
+{% if receiver.telegram_configs is defined %}
+    telegram_configs:
+{% for config in receiver.telegram_configs %}
+      - bot_token: "{{ config.bot_token }}"
+        chat_id: {{ config.chat_id | int }}
+        parse_mode: 'HTML'
+        send_resolved: {{ config.send_resolved | default(true) | lower }}
+{% if config.proxy_url is defined and config.proxy_url %}
+        http_config:
+          proxy_url: "{{ config.proxy_url }}"
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if receiver.email_configs is defined %}
+    email_configs:
+{% for config in receiver.email_configs %}
+      - to: "{{ config.to }}"
+        send_resolved: {{ config.send_resolved | default(true) | lower }}
+{% endfor %}
+{% endif %}
+{% if receiver.webhook_configs is defined %}
+    webhook_configs:
+{% for config in receiver.webhook_configs %}
+      - url: {{ config.url }}
+        send_resolved: {{ config.send_resolved | default(true) | lower }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+{% if alertmanager_config.inhibit_rules is defined %}
+inhibit_rules:
+{{ alertmanager_config.inhibit_rules | to_nice_yaml(indent=2) | indent(2, true) }}
+{% endif %}

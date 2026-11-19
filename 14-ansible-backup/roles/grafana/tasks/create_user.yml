@@ -1,0 +1,16 @@
+---
+- name: Create grafana group
+  ansible.builtin.group:
+    name: "{{ grafana_group }}"
+    state: present
+    system: true
+
+- name: Create grafana user
+  ansible.builtin.user:
+    name: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    shell: /usr/sbin/nologin
+    system: true
+    create_home: false
+    home: "{{ grafana_install_path }}"
+    state: present
