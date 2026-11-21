@@ -67,4 +67,4 @@
 ![YC Lifecycle Policy](images/06-yc-lifecycle-cli.png)
 
 **Правила жизненного цикла во вкладке бакета в консоли Яндекс.Облака:**
-![Yc lifecycle ui](images/07-yc-lifecycle-ui)
+![Yc lifecycle ui](images/07-yc-lifecycle-ui.png)
