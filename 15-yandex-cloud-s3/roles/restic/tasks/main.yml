@@ -1,0 +1,40 @@
+---
+- name: Install Restic via apt
+  ansible.builtin.apt:
+    name: restic
+    state: present
+
+- name: Ensure node_exporter textfile directory exists
+  ansible.builtin.file:
+    path: /var/lib/prometheus/node-exporter
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+
+- name: Initialize Restic repository in Yandex Object Storage
+  ansible.builtin.command: /usr/bin/restic init
+  environment:
+    RESTIC_REPOSITORY: "{{ restic_repo }}"
+    RESTIC_PASSWORD: "{{ restic_password }}"
+    AWS_ACCESS_KEY_ID: "{{ minio_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ minio_secret_key }}"
+  register: restic_init_result
+  failed_when: restic_init_result.rc != 0 and 'already initialized' not in restic_init_result.stderr
+  changed_when: restic_init_result.rc == 0
+
+- name: Deploy backup-to-s3.sh script
+  ansible.builtin.template:
+    src: backup-to-s3.sh.j2
+    dest: /usr/local/bin/backup-to-s3.sh
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: Add Restic S3 backup to cron (03:00 daily)
+  ansible.builtin.cron:
+    name: "Restic S3 Backup"
+    hour: "3"
+    minute: "0"
+    job: "/usr/local/bin/backup-to-s3.sh"
+    user: root

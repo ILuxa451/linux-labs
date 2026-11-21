@@ -1,0 +1,22 @@
+{
+  "Rules": [
+{% for rule in s3_lifecycle_policy %}
+    {
+      "ID": "{{ rule.id }}",
+      "Status": "Enabled",
+      "Prefix": "{{ rule.prefix }}"{% if rule.transitions is defined %},
+      "Transitions": [
+{% for transition in rule.transitions %}
+        {
+          "Days": {{ transition.days }},
+          "StorageClass": "{{ transition.storage_class }}"
+        }{% if not loop.last %},{% endif %}
+{% endfor %}
+      ]{% endif %}{% if rule.expiration is defined %},
+      "Expiration": {
+        "Days": {{ rule.expiration.days }}
+      }{% endif %}
+    }{% if not loop.last %},{% endif %}
+{% endfor %}
+  ]
+}

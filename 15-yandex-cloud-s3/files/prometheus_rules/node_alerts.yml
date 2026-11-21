@@ -1,0 +1,23 @@
+groups:
+  - name: node_alerts
+    interval: 30s
+    rules:
+      # 1. Сервер недоступен (Node Exporter упал)
+      - alert: NodeDown
+        expr: up{job="node"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Сервер {{ $labels.instance }} недоступен"
+          description: "Prometheus не получает метрики с {{ $labels.instance }} уже 1 минуту"
+
+      # 2. Высокая загрузка CPU
+      - alert: HighCPULoad
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокая загрузка CPU на {{ $labels.instance }}"
+          description: "Загрузка CPU составляет {{ $value | printf \"%.2f\" }}%"

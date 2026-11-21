@@ -1,0 +1,34 @@
+{
+  "Rules": [
+    {
+      "ID": "MoveToCold",
+      "Status": "Enabled",
+      "Prefix": "backups/",
+      "Transitions": [
+        {
+          "Days": 30,
+          "StorageClass": "COLD"
+        }
+      ]
+    },
+    {
+      "ID": "MoveToIce",
+      "Status": "Enabled",
+      "Prefix": "backups/",
+      "Transitions": [
+        {
+          "Days": 90,
+          "StorageClass": "ICE"
+        }
+      ]
+    },
+    {
+      "ID": "DeleteOld",
+      "Status": "Enabled",
+      "Prefix": "backups/",
+      "Expiration": {
+        "Days": 365
+      }
+    }
+  ]
+}

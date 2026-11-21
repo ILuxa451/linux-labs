@@ -1,0 +1,20 @@
+[Unit]
+Description=Alertmanager for Prometheus
+Documentation=https://prometheus.io/docs/alerting/latest/alertmanager/
+After=network.target
+
+[Service]
+User={{ alertmanager_user }}
+Group={{ alertmanager_group }}
+Type=simple
+ExecStart=/usr/local/bin/alertmanager \
+  --config.file={{ alertmanager_config_path }}/alertmanager.yml \
+  --storage.path={{ alertmanager_data_path }} \
+  --web.listen-address={{ alertmanager_web_listen_address }} \
+  --log.level=info
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,63 @@
+---
+- name: Install Borg and Borgmatic
+  ansible.builtin.apt:
+    name: "{{ borg_packages }}"
+    state: present
+    update_cache: yes
+
+- name: Create backup repository directory
+  ansible.builtin.file:
+    path: "{{ borg_repo_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: Create config directory for borgmatic
+  ansible.builtin.file:
+    path: /etc/borgmatic
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: Deploy borgmatic config
+  ansible.builtin.template:
+    src: borgmatic-config.yaml.j2
+    dest: /etc/borgmatic/config.yaml
+    owner: root
+    group: root
+    mode: '0640'
+
+- name: Initialize Borg repository if not exists
+  ansible.builtin.command: "borg init --encryption=repokey-blake2 {{ borg_repo_path }}"
+  args:
+    creates: "{{ borg_repo_path }}/config"
+  environment:
+    BORG_PASSPHRASE: "{{ borg_passphrase }}"
+
+- name: Create daily backup cron job (via borgmatic)
+  ansible.builtin.cron:
+    name: "Borgmatic Backup"
+    hour: "2"
+    minute: "0"
+    job: "/usr/bin/borgmatic --verbosity 0"
+    user: root
+
+- name: Create directory for node_exporter textfile collector
+  ansible.builtin.file:
+    path: /var/lib/prometheus/node-exporter
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+
+- name: Create custom metric for Prometheus (backup success)
+  ansible.builtin.copy:
+    dest: /var/lib/prometheus/node-exporter/borg_backup.prom
+    content: |
+      # HELP borg_backup_last_success_timestamp Timestamp of last successful backup
+      # TYPE borg_backup_last_success_timestamp gauge
+      borg_backup_last_success_timestamp 0
+    mode: '0644'
+    force: no

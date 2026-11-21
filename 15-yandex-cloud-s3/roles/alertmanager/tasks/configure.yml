@@ -1,0 +1,9 @@
+---
+- name: Deploy Alertmanager configuration
+  ansible.builtin.template:
+    src: alertmanager.yml.j2
+    dest: "{{ alertmanager_config_path }}/alertmanager.yml"
+    owner: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_group }}"
+    mode: '0644'
+  notify: restart alertmanager

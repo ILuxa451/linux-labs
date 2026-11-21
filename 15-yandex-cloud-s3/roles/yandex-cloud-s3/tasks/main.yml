@@ -1,0 +1,36 @@
+---
+- name: Install AWS CLI
+  ansible.builtin.apt:
+    name: awscli
+    state: present
+
+- name: Create S3 bucket if not exists
+  ansible.builtin.command: >
+    aws s3 mb s3://{{ s3_bucket_name }}
+    --endpoint-url {{ s3_endpoint_url }}
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ s3_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ s3_secret_key }}"
+    AWS_DEFAULT_REGION: "{{ s3_region }}"
+  register: bucket_created
+  failed_when: bucket_created.rc != 0 and 'BucketAlreadyOwnedByYou' not in bucket_created.stderr
+  changed_when: bucket_created.rc == 0
+
+- name: Render lifecycle configuration file
+  ansible.builtin.template:
+    src: lifecycle.json.j2
+    dest: /tmp/lifecycle.json
+    mode: '0644'
+  when: s3_lifecycle_policy is defined
+
+- name: Apply lifecycle policy to bucket
+  ansible.builtin.command: >
+    aws s3api put-bucket-lifecycle-configuration
+    --bucket {{ s3_bucket_name }}
+    --lifecycle-configuration file:///tmp/lifecycle.json
+    --endpoint-url {{ s3_endpoint_url }}
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ s3_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ s3_secret_key }}"
+    AWS_DEFAULT_REGION: "{{ s3_region }}"
+  when: s3_lifecycle_policy is defined

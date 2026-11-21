@@ -1,0 +1,21 @@
+---
+s3_bucket_name: "azul-lab15-backups-2026"
+s3_endpoint_url: "{{ 'https://storage.' + 'yandexcloud.net' }}"
+s3_region: "ru-central1"
+s3_access_key: "{{ vault_yc_access_key }}"
+s3_secret_key: "{{ vault_yc_secret_key }}"
+s3_lifecycle_policy:
+  - id: "MoveToCold"
+    prefix: "backups/"
+    transitions:
+      - days: 30
+        storage_class: "COLD"
+  - id: "MoveToIce"
+    prefix: "backups/"
+    transitions:
+      - days: 90
+        storage_class: "ICE"
+  - id: "DeleteOld"
+    prefix: "backups/"
+    expiration:
+      days: 365

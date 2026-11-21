@@ -1,0 +1,7 @@
+---
+minio_access_key: "{{ vault_yc_access_key }}"
+minio_secret_key: "{{ vault_yc_secret_key }}"
+minio_bucket: "azul-lab15-backups-2026"
+restic_repo: "{{ 's3:https://storage.' + 'yandexcloud.net/' + minio_bucket + '/restic-repo' }}"
+restic_password: "{{ vault_restic_password }}"
+restic_source_dirs: "/etc /home"

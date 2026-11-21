@@ -1,0 +1,27 @@
+# {{ ansible_managed }}
+location:
+    source_directories:
+{% for dir in borg_source_dirs %}
+        - {{ dir }}
+{% endfor %}
+    repositories:
+        - {{ borg_repo_path }}
+
+storage:
+    encryption_passphrase: "{{ borg_passphrase }}"
+    archive_name_format: '{hostname}-{now:%Y-%m-%dT%H:%M:%S}'
+
+retention:
+    keep_daily: {{ borg_keep_daily }}
+    keep_weekly: {{ borg_keep_weekly }}
+    keep_monthly: {{ borg_keep_monthly }}
+    prefix: '{hostname}-'
+
+consistency:
+    checks:
+        - repository
+        - archives
+
+hooks:
+    after_backup:
+        - sh -c 'printf "# HELP borg_backup_last_success_timestamp Timestamp of last successful backup\n# TYPE borg_backup_last_success_timestamp gauge\nborg_backup_last_success_timestamp %s\n" "$(date +%s)" > /var/lib/prometheus/node-exporter/borg_backup.prom'

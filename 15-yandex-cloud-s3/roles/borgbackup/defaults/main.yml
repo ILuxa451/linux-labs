@@ -1,0 +1,21 @@
+---
+# Пакеты для установки
+borg_packages:
+  - borgbackup
+  - borgmatic
+
+# Путь к репозиторию (где будут лежать бэкапы)
+borg_repo_path: /backup/borg-repo
+
+# Пароль для шифрования бэкапа (переопределяется через Vault!)
+borg_passphrase: "CHANGE_ME"
+
+# Что бэкапим (для теста возьмем /etc и /var/log)
+borg_source_dirs:
+  - /etc
+  - /var/log
+
+# Политика хранения (GFS - Grandfather-Father-Son)
+borg_keep_daily: 7
+borg_keep_weekly: 4
+borg_keep_monthly: 6
